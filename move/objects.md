@@ -135,3 +135,4 @@ See also the full [Object Model chapter in the Move Book](https://move-book.com/
 
 *Previous: [Functions](functions.md)*
 *Related: [Move Summary](move_summary.md), [Structs](structs.md)*
+*See also: [References & the Borrow Checker](references.md) (core to understanding &mut Obj in entry functions, TTO, ownership transfers, etc.)*

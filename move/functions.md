@@ -119,3 +119,4 @@ public entry fun transfer_coin(coin: Coin<SUI>, recipient: address) {
 
 *Previous: [Structs](structs.md)*
 *Next: [Objects](objects.md)*
+*See also: [References & the Borrow Checker](references.md) (how the checker enforces rules around &T / &mut T parameters, moves vs borrows in function calls, etc.)*

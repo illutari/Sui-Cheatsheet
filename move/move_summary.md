@@ -27,6 +27,7 @@ See the [Sui Move CLI cheatsheet](../cli/sui/sui_move.md) for compiler commands.
 | **Resource** | A struct with the `key` ability (on Sui) representing an on-chain object with unique ID. | [Objects](objects.md) |
 | **Abilities** | `copy`, `drop`, `store`, `key` — declare what operations are allowed on a type. | [Structs](structs.md) |
 | **Function** | Logic unit. `fun`, `public`, `public(package)`, `entry`, `public entry`. | [Functions](functions.md) |
+| **References & Borrow Checker** | `&T`, `&mut T`, ownership rules, move vs borrow, the static checker that enforces safety. | [References & Borrow Checker](references.md) |
 
 ## Basic Topics
 
@@ -34,7 +35,7 @@ See the [Sui Move CLI cheatsheet](../cli/sui/sui_move.md) for compiler commands.
 - [Primitive Types, Vectors, Strings, Options](types.md) *(planned)*
 - [Structs, Fields, and Packing/Unpacking](structs.md)
 - [Functions, Methods, and Control Flow](functions.md)
-- [References (`&`, `&mut`), Ownership, and Borrowing](references.md) *(planned)*
+- [References (`&`, `&mut`), Ownership, and the Borrow Checker](references.md)
 - [Generics and Constraints](generics.md) *(planned)*
 - [Constants, Asserts/Aborts, and Error Handling](errors.md) *(planned)*
 
@@ -120,4 +121,6 @@ For the most up-to-date language features run `sui move build --help` or consult
 
 ---
 
-Topics implemented: [modules](modules.md) • [structs](structs.md) • [functions](functions.md) • [objects](objects.md) • [examples](examples.md)
+**In-depth topic:** [References, Ownership & the Borrow Checker](references.md) (how the checker works, rules, common errors, Sui-specific usage, 12+ best practices).
+
+Topics implemented: [modules](modules.md) • [structs](structs.md) • [functions](functions.md) • [objects](objects.md) • [examples](examples.md) • [references/borrow checker](references.md)
