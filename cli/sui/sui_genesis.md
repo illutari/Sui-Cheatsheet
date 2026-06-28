@@ -78,4 +78,4 @@ Always run `sui genesis --help` for the exact flags available in your CLI versio
 
 ---
 
-*Previous Page: [`Sui CLI Basic Summary`](cli_summary.md)*
+*Previous Page: [`Sui CLI Basic Summary`](../cli_summary.md)*

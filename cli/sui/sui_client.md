@@ -237,4 +237,4 @@ For the most up-to-date list, run `sui client --help` or `sui client ptb --help`
 
 ---
 
-*Previous Page: [`Sui CLI Basic Summary`](cli_summary.md)*
+*Previous Page: [`Sui CLI Basic Summary`](../cli_summary.md)*

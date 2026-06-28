@@ -76,4 +76,4 @@ For the most up-to-date information, run `sui keytool --help`.
 
 ---
 
-*Previous Page: [`Sui CLI Basic Summary`](cli_summary.md)*
+*Previous Page: [`Sui CLI Basic Summary`](../cli_summary.md)*
