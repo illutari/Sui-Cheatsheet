@@ -10,9 +10,9 @@ The Sui CLI (`sui`) is the primary command-line interface for interacting with t
 | [`sui client ptb`](sui_client.md#6-programmable-transaction-blocks-sui-client-ptb) | Build and execute Programmable Transaction Blocks (PTBs) |
 | [`sui move`](sui_move.md) | Move language tools: create, build, test, and manage packages |
 | [`sui keytool`](sui_keytool.md) | Key generation, import, conversion, and management |
-| `sui start`          | Start a local Sui development network |
-| `sui genesis`        | Initialize a new Sui network |
-| `sui replay`         | Replay and debug transactions |
+| [`sui start`](sui_start.md) | Start a local Sui development network |
+| [`sui genesis`](sui_genesis.md) | Initialize a new Sui network (for persisted localnets) |
+| [`sui replay`](sui_replay.md) | Replay and debug transactions |
 
 ## Essential Everyday Commands
 
@@ -31,12 +31,18 @@ The Sui CLI (`sui`) is the primary command-line interface for interacting with t
 - `sui client active-env` — Show current network
 - `sui client switch --env <NAME>` — Switch between networks (mainnet, testnet, devnet, local)
 
+### Local Development
+- [`sui start`](sui_start.md) — Start local network (use `--force-regenesis --with-faucet` for fresh dev)
+- [`sui genesis`](sui_genesis.md) — Generate persisted genesis config
+- [`sui replay`](sui_replay.md) — Replay txs for debugging / traces
+
 ### Development & Transactions
 - `sui move new <name>` — Create a new Move package
 - `sui move build` — Build a Move package
 - `sui move test` — Run unit tests
-- `sui client publish .` — Publish a Move package
-- `sui client ptb ...` — Construct and execute complex transactions
+- [`sui client publish`](sui_client.md#7-publishing-packages-sui-client-publish) — Publish a Move package (also see [`--publish` in PTB](sui_client.md#9-ptb-publish-and-upgrade))
+- [`sui client upgrade`](sui_client.md#8-upgrading-packages-sui-client-upgrade) — Upgrade a published package
+- `sui client ptb ...` — Construct and execute complex transactions (including `--publish` / `--upgrade`)
 
 ## Quick Reference
 

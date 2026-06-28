@@ -12,8 +12,11 @@ The `sui client` command is the primary interface for interacting with the Sui b
 4. [Object and Transaction Inspection](#4-object-and-transaction-inspection)
 5. [Executing Transactions (Legacy `call`)](#5-executing-transactions-legacy-call)
 6. [Programmable Transaction Blocks (`sui client ptb`)](#6-programmable-transaction-blocks-sui-client-ptb)
-7. [Quick Start Tips](#quick-start-tips)
-8. [Official Resources](#official-resources)
+7. [Publishing Packages (`sui client publish`)](#7-publishing-packages-sui-client-publish)
+8. [Upgrading Packages (`sui client upgrade`)](#8-upgrading-packages-sui-client-upgrade)
+9. [PTB Publish and Upgrade](#9-ptb-publish-and-upgrade)
+10. [Quick Start Tips](#quick-start-tips)
+11. [Official Resources](#official-resources)
 
 ## 1. Addresses and Aliases
 
@@ -61,6 +64,7 @@ The `sui client` command is the primary interface for interacting with the Sui b
 **Recommended**: Use `sui client ptb` for modern Programmable Transaction Blocks (see below).
 
 ## 6. Programmable Transaction Blocks (`sui client ptb`)
+<a name="6-programmable-transaction-blocks-sui-client-ptb"></a>
 
 The modern way to build complex transactions.
 
@@ -79,9 +83,16 @@ The modern way to build complex transactions.
 | `--split-coins <COIN> "[AMOUNTS]"` | Split coin | `--split-coins gas "[100000000, 200000000]"` |
 | `--merge-coins <INTO> "[COINS]"` | Merge coins | `--merge-coins @primary "[@coin1, @coin2]"` |
 | `--transfer-objects "[OBJECTS]" <TO>` | Transfer objects | `--transfer-objects "[gas]" @recipient` |
-| `--publish <PATH>` | Publish Move package | `--publish .` |
-| `--upgrade <PATH>` | Upgrade package | `--upgrade .` |
+| `--publish <PATH>` | Publish a Move package (returns UpgradeCap as first result; must transfer or make immutable) | `--publish .` |
+| `--upgrade <PATH>` | Upgrade an existing package (requires passing an UpgradeCap via prior move-call or assign) | `--upgrade .` |
 | `--make-move-vec <TYPE> "[VALUES]"` | Create vector | `--make-move-vec <u64> "[1,2,3]"` |
+
+**Publish & Upgrade in PTB**:
+
+- `--publish <PATH>` compiles the package at the path and executes a publish. The result (UpgradeCap) is available as the first command result — use `--assign upgrade_cap` immediately after and transfer it (or call `sui::package::make_immutable` on it).
+- `--upgrade <PATH>` performs an upgrade. You must supply the `UpgradeCap` (via a previous command result or as an input object) in the same PTB.
+
+See dedicated sections below for the standalone `sui client publish` / `upgrade` commands (preferred for simple cases) and expanded PTB examples.
 
 **Example PTB**:
 ```bash
@@ -92,7 +103,112 @@ sui client ptb \
   --gas-budget 50000000
   ```
 
-## 7. Quick Start Tips
+## 7. Publishing Packages (`sui client publish`)
+<a name="7-publishing-packages-sui-client-publish"></a>
+
+The primary way to publish a new Move package.
+
+```bash
+sui client publish [package_path] [OPTIONS]
+```
+
+- `package_path` defaults to `.` (current directory, which must contain a `Move.toml`).
+- Automatically builds the package (supports most `sui move build` flags such as `--test`, `--doc`, `--force`, `--no-lint`, etc.).
+- Gas budget is optional — the CLI performs a dry-run to estimate when omitted (since Sui v1.24.1).
+- On success, the package object is created (immutable) and an `UpgradeCap` is transferred to the sender (or the address specified via `--sender`).
+- Updates (or creates) `Published.toml` with the on-chain address, version, `upgrade-capability`, toolchain info, etc. **Commit `Published.toml`** to source control.
+- For local/ephemeral networks use `sui client test-publish` (writes to `Pub.<env>.toml` which should **not** be committed).
+
+**Key flags** (common to publish/upgrade):
+
+| Flag | Purpose | Example |
+|------|---------|---------|
+| `--gas-budget <MIST>` | Max gas (omit for auto-estimate) | `--gas-budget 100000000` |
+| `--dry-run` | Simulate only | `--dry-run` |
+| `--json` | Machine readable output (pipe to `jq`) | `sui client publish --json 2>/dev/null \| jq ...` |
+| `--with-unpublished-dependencies` | Also publish unpinned transitive deps | `--with-unpublished-dependencies` |
+| `--skip-dependency-verification` | Skip on-chain source verification of deps | `--skip-dependency-verification` |
+| `--sender <ADDR>` | Override sender | `--sender 0x...` |
+| `--gas-sponsor <ADDR>` | Sponsor the gas | `--gas-sponsor 0x...` |
+
+**Example**:
+```bash
+cd my_package
+sui client publish
+# or with explicit gas + json for scripting
+sui client publish . --gas-budget 200000000 --json
+```
+
+After publishing, inspect the **Object Changes** section for:
+- The new package ID (immutable object)
+- The `0x2::package::UpgradeCap` ID (owned by you — save it for upgrades)
+
+See also `sui client test-publish --help` for local dev.
+
+## 8. Upgrading Packages (`sui client upgrade`)
+<a name="8-upgrading-packages-sui-client-upgrade"></a>
+
+Upgrades an existing package while preserving its on-chain identity (original ID).
+
+```bash
+sui client upgrade [package_path] --upgrade-capability <UPGRADE_CAP_ID> [OPTIONS]
+```
+
+**Requirements**:
+- The package must be layout-compatible (same public function signatures & struct layouts; new items and impl changes are allowed).
+- You must own / control the `UpgradeCap` from the original (or previous) publish.
+- `init` functions do **not** re-run on upgrade.
+- Old package versions remain on chain forever.
+
+**Typical upgrade steps**:
+1. Make code changes (bump any internal `VERSION` constants if you use versioned migration patterns).
+2. Run the upgrade command, passing the cap.
+3. (If using shared objects + version guards) call your `migrate(...)` entry function in a follow-up tx (protected by AdminCap).
+
+**Example**:
+```bash
+# After saving the UpgradeCap ID from the initial publish output
+sui client upgrade . --upgrade-capability 0x34f7cf31a0a12f81252ab947cb51146bc8138fa5adb3f1fe38e244734319d73c
+```
+
+Useful flags (in addition to the shared ones above):
+- `-c, --upgrade-capability <ID>` **(required)**
+- `--skip-verify-compatibility` — Skip local compatibility check before submitting.
+
+After a successful upgrade, `Published.toml` is updated with the new `version` and the same `upgrade-capability` (the cap object itself is mutated).
+
+For advanced policies (timelocks, admin-only, make_immutable, etc.) see the custom upgrade policy guide and call `sui::package::make_immutable` on the cap (or your policy object).
+
+## 9. PTB Publish and Upgrade (`--publish` / `--upgrade`)
+<a name="9-ptb-publish-and-upgrade"></a>
+
+While the standalone `sui client publish` / `upgrade` are simplest, PTBs give full control (e.g. publish + immediately call a function from the new package, or atomic publish+other steps).
+
+**Publish example (standard pattern)**:
+```bash
+sui client ptb \
+  --move-call sui::tx_context::sender \
+  --assign sender \
+  --publish "." \
+  --assign upgrade_cap \
+  --transfer-objects "[upgrade_cap]" sender \
+  --gas-budget 100000000
+```
+
+This acquires the sender, publishes, binds the resulting UpgradeCap, and transfers it back to the sender in one PTB.
+
+**Upgrade with PTB** (conceptual; supply the cap):
+```bash
+sui client ptb \
+  --assign cap @0xUPGRADE_CAP_ID \
+  --upgrade "." \
+  --gas-budget 50000000
+```
+(Exact PTB syntax for passing the cap to `--upgrade` may require an authorizing move call in more complex policies; the standalone `sui client upgrade` is usually preferred.)
+
+See the official PTB docs for current syntax and `--preview` / `--dry-run` during development.
+
+## 10. Quick Start Tips
 
 ```
 # Initial setup
@@ -104,13 +220,17 @@ sui client gas
 sui move new my_project
 cd my_project
 sui move build
-sui client ptb --publish . --gas-budget 1000000000
+sui client publish .
+# or for more control:
+# sui client ptb --publish . --gas-budget 1000000000
 ```
 
-## 8. Official Resources:
+## 11. Official Resources:
 
 - Sui CLI Cheatsheet: https://docs.sui.io/references/cli/cheatsheet
 - Sui Client PTB: https://docs.sui.io/references/cli/ptb
+- Move Package Management: https://docs.sui.io/develop/manage-packages/move-package-management
+- Upgrading Packages: https://docs.sui.io/develop/publish-upgrade-packages/upgrade
 - Full Sui CLI Docs: https://docs.sui.io/references/cli
 
 For the most up-to-date list, run `sui client --help` or `sui client ptb --help`.
