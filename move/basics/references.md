@@ -192,4 +192,5 @@ The borrow checker is one of the most powerful (and initially frustrating) featu
 ---
 
 *Previous: [Structs](structs.md) | [Functions](functions.md)*
-*Related: [Move Summary](move_summary.md), [Objects](objects.md)*
+*Next: [Generics and Constraints](generics.md)*
+*Related: [Move Summary](../move_summary.md), [Objects](objects.md)*

@@ -2,6 +2,14 @@
 
 Collection of small, self-contained Sui Move examples.
 
+### Table of Contents
+
+- [1. Hello World / Counter (Shared Object)](#1-hello-world--counter-shared-object)
+- [2. Owned NFT with Display](#2-owned-nft-with-display)
+- [3. Simple Capability Pattern](#3-simple-capability-pattern)
+- [4. Using One-Time Witness (OTW) for Coin Creation](#4-using-one-time-witness-otw-for-coin-creation)
+- [Next Steps](#next-steps)
+
 ## 1. Hello World / Counter (Shared Object)
 
 ```move
@@ -37,6 +45,8 @@ public fun value(c: &Counter): u64 {
 ```bash
 sui client ptb --move-call $PKG::counter::increment @counter_id --gas-budget 10000000
 ```
+
+*[Jump to top](#move-examples)*
 
 ## 2. Owned NFT with Display
 
@@ -101,6 +111,8 @@ public entry fun mint(
 }
 ```
 
+*[Jump to top](#move-examples)*
+
 ## 3. Simple Capability Pattern
 
 ```move
@@ -138,6 +150,8 @@ public entry fun set_fee(
 
 Callers must pass the `AdminCap` object to privileged functions.
 
+*[Jump to top](#move-examples)*
+
 ## 4. Using One-Time Witness (OTW) for Coin Creation
 
 (Abbreviated — see full Coin docs)
@@ -165,6 +179,8 @@ fun init(witness: MY_COIN, ctx: &mut TxContext) {
 }
 ```
 
+*[Jump to top](#move-examples)*
+
 ## Next Steps
 
 - Combine with PTBs (`sui client ptb --move-call ...`)
@@ -174,9 +190,4 @@ fun init(witness: MY_COIN, ctx: &mut TxContext) {
 
 ---
 
-*Back to [Move Summary](move_summary.md)*
-```
-
----
-
-*Previous Page: [`Move Summary`](move_summary.md)*
+*Previous: [Move Summary](move_summary.md)*

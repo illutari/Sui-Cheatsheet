@@ -118,5 +118,5 @@ public entry fun transfer_coin(coin: Coin<SUI>, recipient: address) {
 ---
 
 *Previous: [Structs](structs.md)*
-*Next: [Objects](objects.md)*
+*Next: [Objects](objects.md) (see also [References](references.md), [Generics](generics.md), [Error Handling](errors.md))*
 *See also: [References & the Borrow Checker](references.md) (how the checker enforces rules around &T / &mut T parameters, moves vs borrows in function calls, etc.)*

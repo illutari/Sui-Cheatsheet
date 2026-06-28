@@ -112,5 +112,5 @@ public fun greet(name: String): String {
 
 ---
 
-*Previous: [Move Summary](move_summary.md)*
-*Next topics: [Structs](structs.md), [Functions](functions.md)*
+*Previous: [Move Summary](../move_summary.md)*
+*Next topics: [Structs](structs.md), [Functions](functions.md), [References](references.md), [Generics](generics.md), [Error Handling](errors.md)*

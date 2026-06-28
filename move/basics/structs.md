@@ -112,5 +112,5 @@ public fun get(c: &Counter): u64 { c.value }
 ---
 
 *Previous: [Modules](modules.md)*
-*Next: [Functions](functions.md), [Objects](objects.md)*
+*Next: [Functions](functions.md), [Objects](objects.md) (later: [References](references.md), [Generics](generics.md), [Errors](errors.md))*
 *See also: [References & the Borrow Checker](references.md) (deep dive on & / &mut, ownership rules enforced by the checker, and how abilities interact with borrowing)*

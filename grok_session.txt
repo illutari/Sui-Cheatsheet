@@ -265,3 +265,14 @@ This session's work significantly advances both the CLI organization and the Mov
 - No other files changed. Ready for next iteration (e.g., more planned topics or CLI expansions).
 
 Session complete.
+
+## Additional Session Update (reorg + primitives)
+- Moved non-summary non-examples files under move/basics/ : modules.md, structs.md, functions.md, objects.md, references.md (and created types.md there for primitives).
+- Fixed ALL link references in move/*.md and move/basics/*.md (summary table/lists, footers in topics now use ../move_summary.md for top-level, inter-sibling links remain relative e.g. (structs.md)).
+- For examples.md: added ### Table of Contents at top with links to the 4 examples + next steps; added *[Jump to top](#move-examples)* (italicized) after each of the 4 examples; cleaned up bottom (removed stray ``` and duplicate/misplaced footers, standardized to single *Previous: [Move Summary](move_summary.md)* ).
+- Implemented primitives topic: created move/basics/types.md covering variables, bool, integers (ops, casting, overflow), addresses, vector (creation/ops/destroy), Option (creation/use), String (utf8/ascii, ops, limitations, try_*), with tables, code, best practices, book links, and proper footer.
+- Updated move_summary.md: adjusted all links to point under basics/ for moved+new, removed *(planned)* from primitives line, updated implemented list, updated the remaining planned (generics, errors, patterns) to also point under basics/ for future consistency.
+- No other cross-project links (CLI, README, grok) needed changes beyond prior.
+- Structure now: move/{move_summary.md, examples.md, basics/{modules,structs,functions,objects,references,types}.md }
+- All links verified via grep; project remains consistent.
+
